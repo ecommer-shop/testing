@@ -12,5 +12,5 @@ test('test', async ({ page }) => {
   await page.getByRole('button', { name: /comprar|add to cart/i }).first().click();
   await page.getByRole('button', { name: 'Add to Cart' }).click();
   await page.getByRole('link', { name: 'Shopping Cart' }).click();
-  console.log('✅ TODO SALIÓ PERFECTO ok 🚀');
+  console.log('✅ TODO SALIÓ PERFECTO okk 🚀');
 });
