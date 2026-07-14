@@ -1,16 +1,19 @@
 import { test, expect } from '../../fixtures/test.fixtures.js';
+import { CartPage } from '../../pages/CartPage.js';
 
 test.describe('Cart', () => {
-  test('should add product and display it in cart', async ({ cartPage, page }) => {
+  test('should add product and display it in cart @regression @cart', async ({ guestPage }) => {
     test.setTimeout(60000);
 
     await test.step('Navigate to product and add to cart', async () => {
-      await page.goto('https://ecommer.shop/es/product/champinones-orellana');
+      await guestPage.goto('https://ecommer.shop/es/product/champinones-orellana');
 
-      const addButton = page.locator('button:has-text("Agregar al carrito")');
+      const addButton = guestPage.locator('button:has-text("Agregar al carrito")');
       await expect(addButton).toBeVisible({ timeout: 15000 });
       await addButton.click();
     });
+
+    const cartPage = new CartPage(guestPage);
 
     await test.step('Navigate to cart', async () => {
       await cartPage.navigate();
@@ -29,7 +32,7 @@ test.describe('Cart', () => {
     });
 
     await test.step('Verify checkout option exists', async () => {
-      const bodyText = await page.locator('body').innerText();
+      const bodyText = await guestPage.locator('body').innerText();
       expect(bodyText).toContain('Ir al pago');
     });
   });

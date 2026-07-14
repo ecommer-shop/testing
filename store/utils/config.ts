@@ -1,7 +1,9 @@
 import * as dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+const envName = process.env.ENV || '';
+const envFile = envName ? `.env.${envName}` : '.env';
+dotenv.config({ path: path.resolve(process.cwd(), envFile) });
 
 const parseBoolean = (value: string | undefined, fallback: boolean): boolean => {
   if (value === undefined) return fallback;

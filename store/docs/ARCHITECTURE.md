@@ -219,13 +219,13 @@ El test no instancia `SignInPage`. El fixture (`test.fixtures.ts`) lo crea con e
 
 ## 6. Roadmap de Evolución
 
-| Fase       | Contenido                                                                        | Estado         |
-| ---------- | -------------------------------------------------------------------------------- | -------------- |
-| **Fase 1** | Tooling (EditorConfig, Prettier, ESLint, CI, docs)                               | ✅ Completada  |
-| **Fase 2** | Corregir selectores contra DOM real, storageState, BasePage, SignIn/SignUp       | ✅ Completada  |
-| **Fase 3** | Suite Smoke (Home, Login, Catálogo, Carrito, Checkout) + CartPage + CheckoutPage | ✅ Completada  |
-| **Fase 4** | Evaluar Component Object Model si la duplicación lo justifica                    | 📋 Planificado |
-| **Fase 5** | Data Factory con Faker, API helpers, visual testing                              | 📋 Futuro      |
+| Fase       | Contenido                                                                        | Estado        |
+| ---------- | -------------------------------------------------------------------------------- | ------------- |
+| **Fase 1** | Tooling (EditorConfig, Prettier, ESLint, CI, docs)                               | ✅ Completada |
+| **Fase 2** | Corregir selectores contra DOM real, storageState, BasePage, SignIn/SignUp       | ✅ Completada |
+| **Fase 3** | Suite Smoke (Home, Login, Catálogo, Carrito, Checkout) + CartPage + CheckoutPage | ✅ Completada |
+| **Fase 4** | Multi-environment, guestPage fixture, CI matrix, tags, metadata                  | ✅ Completada |
+| **Fase 5** | Data Factory con Faker, API helpers, visual testing                              | 📋 Futuro     |
 
 ## 7. Smoke Suite vs Integration Suite
 
@@ -257,3 +257,31 @@ npm run test:smoke        # Home + Login (3 browsers)
 npm run test:integration  # Catalog + Cart + Checkout (3 browsers)
 npm test                  # Full suite
 ```
+
+## 8. Migración de LoginPage (@deprecated)
+
+### Estado actual
+
+`LoginPage.ts` está marcado como `@deprecated`. Los tests en `tests/authentication/` lo usan y fallan porque asumen una ruta `/login` que no existe (404). La autenticación se gestiona vía Clerk usando `SignInPage` (`/sign-in`) y `SignUpPanel` (overlay).
+
+### Plan de eliminación
+
+| Paso | Acción                                                 | Impacto                                                               |
+| ---- | ------------------------------------------------------ | --------------------------------------------------------------------- |
+| 1    | Eliminar `tests/authentication/authentication.spec.ts` | Test redundante con `login.spec.ts`                                   |
+| 2    | Eliminar `tests/authentication/login.spec.ts`          | Tests con selectores rotos, cubiertos por `tests/smoke/login.spec.ts` |
+| 3    | Eliminar `LoginPage.ts`                                | Clase sin uso                                                         |
+| 4    | Eliminar fixture `loginPage` de `test.fixtures.ts`     | Sin referencias restantes                                             |
+
+### Gatillo
+
+Cuando todos los tests legacy sean reemplazados por tests que usen `SignInPage` y `SignUpPanel`. Actualmente, el smoke test de login (`tests/smoke/login.spec.ts`) ya cubre el flujo de autenticación usando `SignInPage`.
+
+### Reemplazo
+
+| LoginPage (deprecated) | Nuevo                                   |
+| ---------------------- | --------------------------------------- |
+| `navigate() → /login`  | `SignInPage.navigate() → /sign-in`      |
+| `login(email, pass)`   | `SignInPage.login(email, pass)`         |
+| `isLoaded()`           | `SignInPage.isLoaded()`                 |
+| —                      | `SignUpPanel.open()` + `register(data)` |

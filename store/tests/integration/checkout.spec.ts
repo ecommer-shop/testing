@@ -1,7 +1,7 @@
 import { test, expect } from '../../fixtures/test.fixtures.js';
 
 test.describe('Checkout', () => {
-  test('should display checkout page', async ({ checkoutPage, page }) => {
+  test('should display checkout page @regression @checkout', async ({ checkoutPage, page }) => {
     test.setTimeout(60000);
 
     await test.step('Add products to meet minimum order', async () => {

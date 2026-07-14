@@ -1,4 +1,5 @@
 import { test as base, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { HomePage } from '../pages/HomePage.js';
 import { ProductCatalogPage } from '../pages/ProductCatalogPage.js';
 import { CartPage } from '../pages/CartPage.js';
@@ -27,6 +28,7 @@ export type AppFixtures = {
   signInPage: SignInPage;
   signUpPanel: SignUpPanel;
   testUsers: TestUsers;
+  guestPage: Page;
 };
 
 export const test = base.extend<AppFixtures>({
@@ -61,6 +63,32 @@ export const test = base.extend<AppFixtures>({
   testUsers: async ({}, use) => {
     await use(users as TestUsers);
   },
+
+  guestPage: async ({ browser }, use) => {
+    const context = await browser.newContext({
+      ignoreHTTPSErrors: true,
+      viewport: { width: 1920, height: 1080 },
+    });
+    const page = await context.newPage();
+    await use(page);
+    await context.close();
+  },
+});
+
+test.beforeEach(async ({}, testInfo) => {
+  testInfo.attach('environment.json', {
+    body: JSON.stringify(
+      {
+        baseURL: process.env.BASE_URL || 'not set',
+        environment: process.env.ENV || 'default',
+        ci: process.env.CI || 'false',
+        timestamp: new Date().toISOString(),
+      },
+      null,
+      2,
+    ),
+    contentType: 'application/json',
+  });
 });
 
 export { expect };
