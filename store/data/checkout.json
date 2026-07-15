@@ -1,0 +1,10 @@
+{
+  "shippingAddress": {
+    "fullName": "QA Test User",
+    "streetLine1": "Calle 123 #45-67",
+    "streetLine2": "Apto 401",
+    "city": "Bogotá",
+    "province": "Bogotá D.C.",
+    "postalCode": "110111"
+  }
+}
